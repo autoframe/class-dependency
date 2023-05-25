@@ -1,0 +1,38 @@
+{
+    "type": "library",
+    "name": "autoframe/class-dependency",
+    "description": "Autoframe PHP dependency resolver for classes, interfaces and traits using static reflection and all in one class",
+    "license": "MIT",
+    "homepage": "https://github.com/autoframe",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "autoframe/components-exception": "^1.0"
+    },
+    "version": "1.0.1",
+    "authors": [
+        {
+            "name": "Nistor Alexandru Marius",
+            "homepage": "https://autoframe.ro",
+            "role": "Developer"
+        }
+    ],
+    "keywords": [
+        "dependency resolver",
+        "dependency",
+        "resolver",
+        "classes",
+        "interfaces",
+        "traits",
+        "enums",
+        "static",
+        "reflection"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Autoframe\\ClassDependency\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "9.5"
+    }
+}
