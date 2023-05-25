@@ -128,13 +128,13 @@ class AfrClassDependency
     }
 
     /**
-     * @param array $sNamespaces
+     * @param array $aNamespaces
      * @return void
      * @throws AfrException
      */
-    public static function setSkipNamespaceInfo(array $sNamespaces): void
+    public static function setSkipNamespaceInfo(array $aNamespaces): void
     {
-        foreach ($sNamespaces as &$sNs) {
+        foreach ($aNamespaces as &$sNs) {
             if (!is_string($sNs)) {
                 throw new AfrException(
                     'Namespace must be string! Please use an array of Namespaces in ' . __FUNCTION__
@@ -274,11 +274,11 @@ class AfrClassDependency
     }
 
     /**
-     * Object or String Full Qualified Class Name
+     * Object or String Fully Qualified Class Name
      * @param $mClass
      * @return bool
      */
-    public function classDependsOn($mClass): bool
+    public function iDependOnThis($mClass): bool
     {
         return isset($this->getAllDependencies()[is_object($mClass) ? get_class($mClass) : (string)$mClass]);
     }
