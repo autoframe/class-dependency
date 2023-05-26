@@ -1,0 +1,52 @@
+<?php
+declare(strict_types=1);
+
+namespace Unit;
+
+use Autoframe\ClassDependency\AfrClassDependency;
+use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
+
+class getAllDependenciesAfrClassDependencyTest extends TestCase
+{
+    function getAllDependenciesProvider(): array
+    {
+        echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
+        AfrClassDependency::clearDebugFatalError();
+        AfrClassDependency::clearDependencyInfo();
+        AfrClassDependency::setSkipClassInfo([]);
+        AfrClassDependency::setSkipNamespaceInfo([]);
+
+        $aDeps = [
+            'GlobalMockInterfaceExa',
+            'GlobalMockInterfaceExb',
+            'GlobalMockInterface',
+            'GlobalMockTraitSub',
+            'GlobalMockTrait',
+            'GlobalMockAbstract',
+            'GlobalMockClass',
+            'GlobalMockClass2',
+        ];
+
+
+        $aReturn = [];
+        foreach ($aDeps as $sClassDep) {
+            $aReturn[] = [AfrClassDependency::getClassInfo('GlobalMockSingleton'), $sClassDep, true];
+        }
+        $aReturn[] = [AfrClassDependency::getClassInfo('GlobalMockSingleton'), 'GlobalMockSingleton', false];
+        return $aReturn;
+    }
+
+    /**
+     * @test
+     * @dataProvider getAllDependenciesProvider
+     */
+    public function getAllDependenciesTest(AfrClassDependency $oDep, string $sClassDep, bool $bIsset): void
+    {
+        $this->assertEquals($bIsset, isset($oDep->getAllDependencies()[$sClassDep]));
+
+    }
+
+
+}

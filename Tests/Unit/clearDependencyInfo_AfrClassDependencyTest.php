@@ -1,0 +1,47 @@
+<?php
+declare(strict_types=1);
+
+namespace Unit;
+
+use Unit\AfrClassDependencyExtended as AfrClassDependency;
+use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
+//AfrClassDependency::setSkipNamespaceInfoGathering(['Autoframe\\Core\\','Symfony\Component\Finder']);
+//AfrClassDependency::setSkipClassInfoGathering(['URLify','phpDocumentor\Reflection\DocBlock\Tags\Reference\Fqsen']);
+
+
+
+
+class clearDependencyInfo_AfrClassDependencyTest extends TestCase
+{
+    function clearDependencyInfoProvider(): array
+    {
+        echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
+        AfrClassDependency::clearDebugFatalError();
+        AfrClassDependency::clearDependencyInfo();
+        AfrClassDependency::setSkipClassInfo([]);
+        AfrClassDependency::setSkipNamespaceInfo([]);
+
+
+        $aReturn = [];
+        $aReturn[] = ['imaginary\un_existent'];
+        $aReturn[] = ['GlobalMockSingleton'];
+
+        return $aReturn;
+    }
+
+    /**
+     * @test
+     * @dataProvider clearDependencyInfoProvider
+     */
+    public function clearDependencyInfoTest($sFQCN): void
+    {
+        AfrClassDependency::getClassInfo($sFQCN);
+        $this->assertEquals(true, count(AfrClassDependency::getADependency())>0);
+        AfrClassDependency::clearDependencyInfo();
+        $this->assertEquals(0, count(AfrClassDependency::getADependency()));
+    }
+
+
+}

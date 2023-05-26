@@ -27,11 +27,8 @@ use function method_exists;
 use function class_uses;
 use function class_implements;
 use function class_parents;
+
 //use function enum_exists; //php8.1
-
-//AfrClassDependency::setSkipNamespaceInfoGathering(['Autoframe\\Core\\','Symfony\Component\Finder']);
-//AfrClassDependency::setSkipClassInfoGathering(['URLify','phpDocumentor\Reflection\DocBlock\Tags\Reference\Fqsen']);
-
 
 class AfrClassDependency
 {
@@ -46,11 +43,13 @@ class AfrClassDependency
     protected static array $aFatalErr = [];
 
     /**
-     * @param string $sFQCN
+     * Object or string containing Fully Qualified Class Name
+     * @param mixed $obj_sFQCN
      * @return self
      */
-    public static function getClassInfo(string $sFQCN): self
+    public static function getClassInfo($obj_sFQCN): self
     {
+        $sFQCN = is_object($obj_sFQCN) ? get_class($obj_sFQCN) : (string)$obj_sFQCN;
         if (!isset(self::$aDependency[$sFQCN])) {
             if (isset(self::$aSkipClasses[$sFQCN]) || self::mustSkipNamespaceInfoGatheringForClass($sFQCN)) {
                 self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
@@ -71,11 +70,14 @@ class AfrClassDependency
     }
 
     /**
-     * @param string $sFQCN
+     * Object or string containing Fully Qualified Class Name
+     * @param mixed $obj_sFQCN
      * @return bool
      */
-    public static function clearClassInfo(string $sFQCN): bool
+    public static function clearClassInfo($obj_sFQCN): bool
     {
+        $sFQCN = is_object($obj_sFQCN) ? get_class($obj_sFQCN) : (string)$obj_sFQCN;
+
         if (isset(self::$aDependency[$sFQCN])) {
             unset(self::$aDependency[$sFQCN]);
             return true;
@@ -120,24 +122,36 @@ class AfrClassDependency
 
     /**
      * @param array $aFQCN
-     * @return void
+     * @param bool $bMergeWithExisting
+     * @return array
      */
-    public static function setSkipClassInfo(array $aFQCN): void
+    public static function setSkipClassInfo(array $aFQCN, bool $bMergeWithExisting = false): array
     {
-        self::$aSkipClasses = array_flip($aFQCN);
+        if ($bMergeWithExisting) {
+            $aCurrent = !isset(self::$aSkipClasses) || empty(self::$aSkipClasses) ? [] : self::$aSkipClasses;
+            self::$aSkipClasses = array_merge($aCurrent, array_flip($aFQCN));
+        } else {
+            self::$aSkipClasses = array_flip($aFQCN);
+        }
+        return self::$aSkipClasses;
     }
 
     /**
      * @param array $aNamespaces
-     * @return void
+     * @param bool $bMergeWithExisting
+     * @return array
      * @throws AfrException
      */
-    public static function setSkipNamespaceInfo(array $aNamespaces): void
+    public static function setSkipNamespaceInfo(array $aNamespaces, bool $bMergeWithExisting = false): array
     {
+        if (!$bMergeWithExisting || !isset(self::$aSkipNamespaces)) {
+            self::$aSkipNamespaces = []; //clear
+        }
         foreach ($aNamespaces as &$sNs) {
             if (!is_string($sNs)) {
                 throw new AfrException(
-                    'Namespace must be string! Please use an array of Namespaces in ' . __FUNCTION__
+                    'Namespace must be a string! Please use an array of Namespaces in ' .
+                    __CLASS__ . '::' . __FUNCTION__
                 );
             }
             if ($sNs === '') {
@@ -148,6 +162,7 @@ class AfrClassDependency
                 self::$aSkipNamespaces[$sNs] = strlen($sNs);
             }
         }
+        return self::$aSkipNamespaces;
     }
 
     /**
@@ -175,7 +190,7 @@ class AfrClassDependency
         if (!isset(self::$aSkipNamespaces)) {
             return false; //no rules set
         }
-        if(isset(self::$aSkipNamespaces['\\'])){
+        if (isset(self::$aSkipNamespaces['\\'])) {
             return true; //this will match any namespace
         }
         $sFQCN = trim($sFQCN, '\\');
@@ -234,19 +249,11 @@ class AfrClassDependency
     protected bool $bInstantiable;
     protected bool $bSingleton;
 
-    protected function __construct($mClass)
+    protected function __construct(string $sFQCN)
     {
-        $this->sFQCN = is_object($mClass) ? get_class($mClass) : (string)$mClass;
+        $this->sFQCN = $sFQCN;
         $this->sType = $this->getType();
         $this->detectComponents();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->getClassName();
     }
 
     /**
@@ -273,16 +280,6 @@ class AfrClassDependency
         return $this->sType;
     }
 
-    /**
-     * Object or String Fully Qualified Class Name
-     * @param $mClass
-     * @return bool
-     */
-    public function iDependOnThis($mClass): bool
-    {
-        return isset($this->getAllDependencies()[is_object($mClass) ? get_class($mClass) : (string)$mClass]);
-    }
-
 
     /**
      * @return array
@@ -300,8 +297,16 @@ class AfrClassDependency
         return $this->sFQCN;
     }
 
-
     /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getClassName();
+    }
+
+
+    /** Get parent Classes
      * @return array
      */
     public function getParents(): array
@@ -312,7 +317,7 @@ class AfrClassDependency
         return $this->aParents;
     }
 
-    /**
+    /** Get parent Traits
      * @return array
      */
     public function getTraits(): array
@@ -323,7 +328,7 @@ class AfrClassDependency
         return $this->aTraits;
     }
 
-    /**
+    /** Get parent Interfaces
      * @return array
      */
     public function getInterfaces(): array
@@ -432,6 +437,15 @@ class AfrClassDependency
         }
     }
 
+    /**
+     * Object or String Fully Qualified Class Name
+     * @param $mClass
+     * @return bool
+     */
+    public function doIDependOn($mClass): bool
+    {
+        return isset($this->getAllDependencies()[is_object($mClass) ? get_class($mClass) : (string)$mClass]);
+    }
 
     /**
      * @return void
@@ -443,18 +457,34 @@ class AfrClassDependency
         }
         foreach ((array)class_uses($this->sFQCN) as $sTrait) {
             $oCompound = self::getClassInfo($sTrait);
-            $this->aTraits[(string)$oCompound] = null;
+            $this->aTraits[(string)$oCompound] = true;
+            $this->detectTraits((string)$oCompound);
         }
         foreach ((array)class_implements($this->sFQCN) as $sInterface) {
             $oCompound = self::getClassInfo($sInterface);
-            $this->aInterfaces[(string)$oCompound] = null;
+            $this->aInterfaces[(string)$oCompound] = true;
         }
         foreach ((array)class_parents($this->sFQCN) as $sParent) {
             $oCompound = self::getClassInfo($sParent);
-            $this->aParents[(string)$oCompound] = null;
+            $this->aParents[(string)$oCompound] = true;
+            $this->detectTraits((string)$oCompound);
         }
         //https://www.php.net/manual/en/language.enumerations.php
         //if (PHP_VERSION_ID >= 81000 && $this->isEnum()) { new \ReflectionEnum($this->sFQCN); }
+    }
+
+    /**
+     * class_uses will show only the traits that make up the current class, so we recursively get them
+     * @param string $sFQCN
+     * @return void
+     */
+    private function detectTraits(string $sFQCN): void
+    {
+        foreach (self::getClassInfo($sFQCN)->getTraits() as $sParentTrait => $nx) {
+            if (!isset($this->aTraits[$sParentTrait])) {
+                $this->aTraits[$sParentTrait] = true;
+            }
+        }
     }
 
 }

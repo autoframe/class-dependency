@@ -1,6 +1,6 @@
 <?php
 
-class GlobalMockAbstract implements GlobalMockInterface
+abstract class GlobalMockAbstract implements GlobalMockInterface
 {
     use GlobalMockTrait;
 

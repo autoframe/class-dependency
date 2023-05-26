@@ -12,14 +12,14 @@ Namespace\Class:
 
 
 Static methods:
-- public static function getClassInfo(string $sFQCN): AfrClassDependency;
-- public static function clearClassInfo(string $sFQCN): bool;
+- public static function getClassInfo(mixed $obj_sFQCN): AfrClassDependency;
+- public static function clearClassInfo(mixed $obj_sFQCN): bool;
 - public static function getDependencyInfo(): array;
 - public static function clearDependencyInfo(): void;
 - public static function getDebugFatalError(): array;
 - public static function clearDebugFatalError(): void;
-- public static function setSkipClassInfo(array $aFQCN): void;
-- public static function setSkipNamespaceInfo(array $aNamespaces): void;
+- public static function setSkipClassInfo(array $aFQCN, bool $bMergeWithExisting = false): array;
+- public static function setSkipNamespaceInfo(array $aNamespaces, bool $bMergeWithExisting = false): array;
 
 Instance methods:
 - public function getType(): string;
