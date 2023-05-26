@@ -31,8 +31,6 @@ class getDebugFatalError_clearDebugFatalError_AfrClassDependencyTest extends Tes
      */
     public function getClearDebugFatalErrorTest($oDep): void
     {
-        $this->assertEquals(true, $oDep instanceof AfrClassDependency);
-
         $mErrArr = AfrClassDependency::getDebugFatalError();
         $this->assertEquals('array', gettype($mErrArr));
         $this->assertCount(0, $mErrArr);

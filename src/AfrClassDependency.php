@@ -65,6 +65,14 @@ class AfrClassDependency
                     self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::F);
                 }
             }
+        } else {
+            //isset, so we check for namespace skipping after merge / reconfigure
+            if (self::$aDependency[$sFQCN]->getType() !== self::S && (
+                    isset(self::$aSkipClasses[$sFQCN]) ||
+                    self::mustSkipNamespaceInfoGatheringForClass($sFQCN)
+                )) {
+                self::morphToSkipped($sFQCN);
+            }
         }
         return self::$aDependency[$sFQCN];
     }
@@ -133,6 +141,19 @@ class AfrClassDependency
         } else {
             self::$aSkipClasses = array_flip($aFQCN);
         }
+        foreach (self::$aSkipClasses as $sFQCN => &$x) {
+            if (isset(self::$aDependency[$sFQCN])) {
+                unset(self::$aDependency[$sFQCN]);
+                $x = true;
+            }
+            $x = false;
+        }
+        //cleanup previously skipped classes
+        foreach (self::$aDependency as $sFQCN => $oSelf) {
+            if ($oSelf->getType() === self::S && !isset(self::$aSkipClasses[$sFQCN])) {
+                unset(self::$aDependency[$sFQCN]);
+            }
+        }
         return self::$aSkipClasses;
     }
 
@@ -187,7 +208,7 @@ class AfrClassDependency
      */
     private static function mustSkipNamespaceInfoGatheringForClass(string $sFQCN): bool
     {
-        if (!isset(self::$aSkipNamespaces)) {
+        if (!isset(self::$aSkipNamespaces) || empty(self::$aSkipNamespaces)) {
             return false; //no rules set
         }
         if (isset(self::$aSkipNamespaces['\\'])) {
@@ -278,6 +299,21 @@ class AfrClassDependency
             $this->sType = self::E;
         }
         return $this->sType;
+    }
+
+    /**
+     * @param string $sFQCN
+     * @return void
+     */
+    private static function morphToSkipped(string $sFQCN): void
+    {
+        self::$aDependency[$sFQCN]->sType = self::S;
+        self::$aDependency[$sFQCN]->aInterfaces =
+        self::$aDependency[$sFQCN]->aTraits =
+        self::$aDependency[$sFQCN]->aParents = [];
+        unset(self::$aDependency[$sFQCN]->bAbstract);
+        unset(self::$aDependency[$sFQCN]->bInstantiable);
+        unset(self::$aDependency[$sFQCN]->bSingleton);
     }
 
 

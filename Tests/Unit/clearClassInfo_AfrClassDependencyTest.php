@@ -7,11 +7,6 @@ use Unit\AfrClassDependencyExtended as AfrClassDependency;
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
-//AfrClassDependency::setSkipNamespaceInfoGathering(['Autoframe\\Core\\','Symfony\Component\Finder']);
-//AfrClassDependency::setSkipClassInfoGathering(['URLify','phpDocumentor\Reflection\DocBlock\Tags\Reference\Fqsen']);
-
-
-
 
 class clearClassInfo_AfrClassDependencyTest extends TestCase
 {

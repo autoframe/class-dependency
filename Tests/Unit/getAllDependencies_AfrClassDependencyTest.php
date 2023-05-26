@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
-class getAllDependenciesAfrClassDependencyTest extends TestCase
+class getAllDependencies_AfrClassDependencyTest extends TestCase
 {
     function getAllDependenciesProvider(): array
     {

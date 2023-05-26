@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Unit;
 
 use Autoframe\ClassDependency\AfrClassDependency;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
