@@ -7,10 +7,9 @@
 
 *Autoframe PHP dependency resolver for classes, interfaces and traits using static reflection and all in one class*
 
-Namespace:
-- Autoframe\\ClassDependency
+Namespace\Class:
+- Autoframe\ClassDependency\AfrClassDependency
 
-Class: AfrClassDependency
 
 Static methods:
 - public static function getClassInfo(string $sFQCN): AfrClassDependency;
@@ -24,10 +23,9 @@ Static methods:
 
 Instance methods:
 - public function getType(): string;
-- public function __toString(): string;
-- public function iDependOnThis($mClass): bool;
 - public function getAllDependencies(): array;
 - public function getClassName(): string;
+- public function __toString(): string;
 - public function getParents(): array;
 - public function getTraits(): array;
 - public function getInterfaces(): array;
@@ -38,5 +36,6 @@ Instance methods:
 - public function isAbstract(): bool;
 - public function isInstantiable(): bool;
 - public function isSingleton(): bool;
+- public function doIDependOn($mClass): bool;
 
-Instance methods are available using getClassInfo(...): AfrClassDependency
+Instance methods are available using getClassInfo(className or object): AfrClassDependency
