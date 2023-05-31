@@ -71,7 +71,7 @@ class AfrClassDependency
                     isset(self::$aSkipClasses[$sFQCN]) ||
                     self::mustSkipNamespaceInfoGatheringForClass($sFQCN)
                 )) {
-                self::morphToSkipped($sFQCN);
+                self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
             }
         }
         return self::$aDependency[$sFQCN];
@@ -299,21 +299,6 @@ class AfrClassDependency
             $this->sType = self::E;
         }
         return $this->sType;
-    }
-
-    /**
-     * @param string $sFQCN
-     * @return void
-     */
-    private static function morphToSkipped(string $sFQCN): void
-    {
-        self::$aDependency[$sFQCN]->sType = self::S;
-        self::$aDependency[$sFQCN]->aInterfaces =
-        self::$aDependency[$sFQCN]->aTraits =
-        self::$aDependency[$sFQCN]->aParents = [];
-        unset(self::$aDependency[$sFQCN]->bAbstract);
-        unset(self::$aDependency[$sFQCN]->bInstantiable);
-        unset(self::$aDependency[$sFQCN]->bSingleton);
     }
 
 
