@@ -106,6 +106,12 @@ class AfrClassDependency
      */
     public static function clearDependencyInfo(): void
     {
+        if (!empty(self::$aDependency)) {
+            foreach (self::$aDependency as $sFQCN => $obj) {
+                unset($obj);
+                unset(self::$aDependency[$sFQCN]);
+            }
+        }
         self::$aDependency = [];
     }
 
