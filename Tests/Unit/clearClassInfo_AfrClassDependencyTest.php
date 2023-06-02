@@ -13,11 +13,7 @@ class clearClassInfo_AfrClassDependencyTest extends TestCase
     function clearClassInfoProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
-
+        AfrClassDependency::flush();
 
         $aReturn = [];
         $aReturn[] = ['imaginary\un_existent'];

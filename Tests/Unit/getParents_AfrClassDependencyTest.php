@@ -24,10 +24,8 @@ class getParents_AfrClassDependencyTest extends TestCase
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
+        AfrClassDependency::flush();
+
         $aDeps = [
             'GlobalMockInterfaceExa' => $this->flipT([]),
             'GlobalMockInterfaceExb' => $this->flipT([]),

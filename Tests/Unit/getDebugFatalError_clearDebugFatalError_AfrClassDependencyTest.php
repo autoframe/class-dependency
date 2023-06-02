@@ -14,10 +14,8 @@ class getDebugFatalError_clearDebugFatalError_AfrClassDependencyTest extends Tes
     function getClearDebugFatalErrorProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
+        AfrClassDependency::flush();
+
 
         $aReturn = [];
         $aReturn[] = [AfrClassDependency::getClassInfo(new \stdClass())];

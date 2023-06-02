@@ -154,10 +154,8 @@ class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
      */
     private function resetClassDep(): void
     {
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
+        AfrClassDependency::flush();
+
     }
 
 

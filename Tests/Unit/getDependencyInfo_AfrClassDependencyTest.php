@@ -14,10 +14,8 @@ class getDependencyInfo_AfrClassDependencyTest extends TestCase
     function getDependencyInfoProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
+        AfrClassDependency::flush();
+
 
         $aReturn = [];
         $aReturn[] = [AfrClassDependency::getClassInfo('GlobalMockSingleton')];

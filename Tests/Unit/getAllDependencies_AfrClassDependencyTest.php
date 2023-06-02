@@ -13,10 +13,7 @@ class getAllDependencies_AfrClassDependencyTest extends TestCase
     function getAllDependenciesProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
-        AfrClassDependency::setSkipClassInfo([]);
-        AfrClassDependency::setSkipNamespaceInfo([]);
+        AfrClassDependency::flush();
 
         $aDeps = [
             'GlobalMockInterfaceExa',

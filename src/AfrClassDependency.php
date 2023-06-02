@@ -51,7 +51,7 @@ class AfrClassDependency
     {
         $sFQCN = is_object($obj_sFQCN) ? get_class($obj_sFQCN) : (string)$obj_sFQCN;
         if (!isset(self::$aDependency[$sFQCN])) {
-            if (isset(self::$aSkipClasses[$sFQCN]) || self::mustSkipNamespaceInfoGatheringForClass($sFQCN)) {
+            if (self::isSkipped($sFQCN)) {
                 self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
             } else {
                 self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::F);
@@ -65,15 +65,13 @@ class AfrClassDependency
                     self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::F);
                 }
             }
-        } else {
-            //isset, so we check for namespace skipping after merge / reconfigure
-            if (self::$aDependency[$sFQCN]->getType() !== self::S && (
-                    isset(self::$aSkipClasses[$sFQCN]) ||
-                    self::mustSkipNamespaceInfoGatheringForClass($sFQCN)
-                )) {
-                self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
-            }
         }
+//        else {
+//            //isset, so we check for namespace skipping after merge / reconfigure
+//            if (self::$aDependency[$sFQCN]->getType() !== self::S && self::isSkipped($sFQCN)) {
+//                self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
+//            }
+//        }
         return self::$aDependency[$sFQCN];
     }
 
@@ -91,6 +89,14 @@ class AfrClassDependency
             return true;
         }
         return false;
+    }
+
+    public static function flush(): void
+    {
+        self::$aFatalErr = [];
+        self::$aDependency = [];
+        self::$aSkipClasses=[];
+        self::$aSkipNamespaces=[];
     }
 
     /**
@@ -142,25 +148,29 @@ class AfrClassDependency
     public static function setSkipClassInfo(array $aFQCN, bool $bMergeWithExisting = false): array
     {
         if ($bMergeWithExisting) {
-            $aCurrent = !isset(self::$aSkipClasses) || empty(self::$aSkipClasses) ? [] : self::$aSkipClasses;
+            $aCurrent = self::getSkipClassInfo();
             self::$aSkipClasses = array_merge($aCurrent, array_flip($aFQCN));
         } else {
             self::$aSkipClasses = array_flip($aFQCN);
         }
+
         foreach (self::$aSkipClasses as $sFQCN => &$x) {
             if (isset(self::$aDependency[$sFQCN])) {
                 unset(self::$aDependency[$sFQCN]);
-                $x = true;
+                $x = true; //internal debug flag
             }
-            $x = false;
+            $x = false; //internal debug flag
         }
-        //cleanup previously skipped classes
-        foreach (self::$aDependency as $sFQCN => $oSelf) {
-            if ($oSelf->getType() === self::S && !isset(self::$aSkipClasses[$sFQCN])) {
-                unset(self::$aDependency[$sFQCN]);
-            }
-        }
+        self::processNewSkipRules();
         return self::$aSkipClasses;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSkipClassInfo(): array
+    {
+        return !isset(self::$aSkipClasses) || empty(self::$aSkipClasses) ? [] : self::$aSkipClasses;
     }
 
     /**
@@ -176,10 +186,14 @@ class AfrClassDependency
         }
         foreach ($aNamespaces as &$sNs) {
             if (!is_string($sNs)) {
-                throw new AfrException(
-                    'Namespace must be a string! Please use an array of Namespaces in ' .
-                    __CLASS__ . '::' . __FUNCTION__
-                );
+                $sCastNs = (string)$sNs;
+                if (strlen($sCastNs) < 1) {
+                    throw new AfrException(
+                        'Namespace must be a string or castable! Please use an array of Namespaces in ' .
+                        __CLASS__ . '::' . __FUNCTION__
+                    );
+                }
+                $sNs = $sCastNs;
             }
             if ($sNs === '') {
                 self::$aSkipNamespaces[''] = 0; //class without namespace
@@ -189,7 +203,23 @@ class AfrClassDependency
                 self::$aSkipNamespaces[$sNs] = strlen($sNs);
             }
         }
+        self::processNewSkipRules();
+
         return self::$aSkipNamespaces;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSkipNamespaceInfo(): array
+    {
+        return !isset(self::$aSkipNamespaces) ? [] : self::$aSkipNamespaces;
+    }
+
+    public static function isSkipped($obj_sFQCN): bool
+    {
+        $sFQCN = is_object($obj_sFQCN) ? get_class($obj_sFQCN) : (string)$obj_sFQCN;
+        return self::mustSkipNamespaceInfoGatheringForClass($sFQCN) || isset(self::$aSkipClasses[$sFQCN]);
     }
 
     /**
@@ -197,7 +227,7 @@ class AfrClassDependency
      * @param string $sType
      * @return static
      */
-    private static function makeBlank(string $sFQCN, string $sType = ''): self
+    protected static function makeBlank(string $sFQCN, string $sType = ''): self
     {
         $oBlank = new static('');//blank init
         $oBlank->sFQCN = $sFQCN;
@@ -212,7 +242,7 @@ class AfrClassDependency
      * @param string $sFQCN
      * @return bool
      */
-    private static function mustSkipNamespaceInfoGatheringForClass(string $sFQCN): bool
+    protected static function mustSkipNamespaceInfoGatheringForClass(string $sFQCN): bool
     {
         if (!isset(self::$aSkipNamespaces) || empty(self::$aSkipNamespaces)) {
             return false; //no rules set
@@ -305,6 +335,27 @@ class AfrClassDependency
             $this->sType = self::E;
         }
         return $this->sType;
+    }
+
+    /**
+     * @return void
+     */
+    protected static function processNewSkipRules(): void
+    {
+        // Class can be resolved on demand / later with self::getClassInfo($sFQCN)
+        // For now, just clear ram memory
+        foreach (self::$aDependency as $sFQCN => $oSelf) {
+            $bIsSkipped = self::isSkipped($sFQCN);
+            if (
+                // Cleanup previously skipped, so they can be resolved with a new request
+                $oSelf->getType() === self::S && !$bIsSkipped ||
+                // Apply new namespace rules for existing
+                $oSelf->getType() !== self::S && $bIsSkipped
+            ) {
+                unset($oSelf);
+                unset(self::$aDependency[$sFQCN]);
+            }
+        }
     }
 
 

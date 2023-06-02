@@ -13,10 +13,9 @@ class getType_AfrClassDependencyTest extends TestCase
     function getTypeProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
-        AfrClassDependency::clearDebugFatalError();
-        AfrClassDependency::clearDependencyInfo();
+
+        AfrClassDependency::flush();
         AfrClassDependency::setSkipClassInfo(['GlobalMockClass2']);
-        AfrClassDependency::setSkipNamespaceInfo([]);
         $aReturn = [];
         $aReturn[] = [AfrClassDependency::getClassInfo('GlobalMockSingleton'), 'class'];
         $aReturn[] = [AfrClassDependency::getClassInfo('GlobalMockClass2'), 'skip'];
