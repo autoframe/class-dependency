@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
 {
-    function setSkipNamespaceInfoProvider(): array
+    static function setSkipNamespaceInfoProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         $aReturn = [];
@@ -44,11 +44,7 @@ class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
 
 
 
-
-
-
-
-    function setSkipNamespaceInfoMergTrueProvider(): array
+    static function setSkipNamespaceInfoMergTrueProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         $aCombine = [];

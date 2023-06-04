@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getDependencyInfo_AfrClassDependencyTest extends TestCase
 {
-    function getDependencyInfoProvider(): array
+    static function getDependencyInfoProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         AfrClassDependency::flush();

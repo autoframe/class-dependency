@@ -66,12 +66,6 @@ class AfrClassDependency
                 }
             }
         }
-//        else {
-//            //isset, so we check for namespace skipping after merge / reconfigure
-//            if (self::$aDependency[$sFQCN]->getType() !== self::S && self::isSkipped($sFQCN)) {
-//                self::$aDependency[$sFQCN] = self::makeBlank($sFQCN, self::S);
-//            }
-//        }
         return self::$aDependency[$sFQCN];
     }
 
@@ -91,6 +85,9 @@ class AfrClassDependency
         return false;
     }
 
+    /**
+     * @return void
+     */
     public static function flush(): void
     {
         self::$aFatalErr = [];
@@ -216,6 +213,10 @@ class AfrClassDependency
         return !isset(self::$aSkipNamespaces) ? [] : self::$aSkipNamespaces;
     }
 
+    /**
+     * @param $obj_sFQCN
+     * @return bool
+     */
     public static function isSkipped($obj_sFQCN): bool
     {
         $sFQCN = is_object($obj_sFQCN) ? get_class($obj_sFQCN) : (string)$obj_sFQCN;
@@ -528,7 +529,7 @@ class AfrClassDependency
     /**
      * @return void
      */
-    private function detectComponents(): void
+    protected function detectComponents(): void
     {
         if (!$this->sFQCN || $this->sType === self::U) {
             return;
@@ -556,7 +557,7 @@ class AfrClassDependency
      * @param string $sFQCN
      * @return void
      */
-    private function detectTraits(string $sFQCN): void
+    protected function detectTraits(string $sFQCN): void
     {
         foreach (self::getClassInfo($sFQCN)->getTraits() as $sParentTrait => $nx) {
             if (!isset($this->aTraits[$sParentTrait])) {

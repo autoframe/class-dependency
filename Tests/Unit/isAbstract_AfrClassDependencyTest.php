@@ -12,9 +12,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class isAbstract_AfrClassDependencyTest extends TestCase
 {
-
-
-    function isAbstractProvider(): array
+    static function isAbstractProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

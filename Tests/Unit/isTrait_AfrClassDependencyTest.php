@@ -13,7 +13,7 @@ class isTrait_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isTraitProvider(): array
+    static function isTraitProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

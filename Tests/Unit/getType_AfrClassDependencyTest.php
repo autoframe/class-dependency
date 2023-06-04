@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getType_AfrClassDependencyTest extends TestCase
 {
-    function getTypeProvider(): array
+    static function getTypeProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

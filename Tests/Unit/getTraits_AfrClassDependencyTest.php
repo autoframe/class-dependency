@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getTraits_AfrClassDependencyTest extends TestCase
 {
-    private function flipT(array $a): array
+    private static function flipT(array $a): array
     {
         $a = array_flip($a);
         foreach ($a as &$v) {
@@ -20,25 +20,25 @@ class getTraits_AfrClassDependencyTest extends TestCase
         return $a;
     }
 
-    function getTraitsProvider(): array
+    static function getTraitsProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 
         AfrClassDependency::flush();
 
         $aDeps = [
-            'GlobalMockInterfaceExa' => $this->flipT([]),
-            'GlobalMockInterfaceExb' => $this->flipT([]),
-            'GlobalMockInterface' => $this->flipT([]),
-            'GlobalMockTraitSub' => $this->flipT([]),
-            'GlobalMockTrait' => $this->flipT(['GlobalMockTraitSub']),
-            'GlobalMockAbstract' => $this->flipT(['GlobalMockTrait','GlobalMockTraitSub']),
-            'GlobalMockClass' => $this->flipT(['GlobalMockTrait','GlobalMockTraitSub']),
-            'GlobalMockClass2' => $this->flipT(['GlobalMockTrait','GlobalMockTraitSub']),
-            'GlobalMockSingleton' => $this->flipT(['GlobalMockTrait','GlobalMockTraitSub']),
+            'GlobalMockInterfaceExa' => self::flipT([]),
+            'GlobalMockInterfaceExb' => self::flipT([]),
+            'GlobalMockInterface' => self::flipT([]),
+            'GlobalMockTraitSub' => self::flipT([]),
+            'GlobalMockTrait' => self::flipT(['GlobalMockTraitSub']),
+            'GlobalMockAbstract' => self::flipT(['GlobalMockTrait','GlobalMockTraitSub']),
+            'GlobalMockClass' => self::flipT(['GlobalMockTrait','GlobalMockTraitSub']),
+            'GlobalMockClass2' => self::flipT(['GlobalMockTrait','GlobalMockTraitSub']),
+            'GlobalMockSingleton' => self::flipT(['GlobalMockTrait','GlobalMockTraitSub']),
         ];
         if (PHP_VERSION_ID >= 81000) {
-            $aDeps['GlobalMockEnum'] = $this->flipT([]);
+            $aDeps['GlobalMockEnum'] = self::flipT([]);
         }
 
         $aReturn = [];

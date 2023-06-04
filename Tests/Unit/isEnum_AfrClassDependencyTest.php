@@ -13,7 +13,7 @@ class isEnum_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isEnumProvider(): array
+    static function isEnumProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

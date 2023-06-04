@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class setSkipClassInfo_AfrClassDependencyTest extends TestCase
 {
-    function setSkipClassInfoProvider(): array
+    static function setSkipClassInfoProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         $aReturn = [];
@@ -39,10 +39,7 @@ class setSkipClassInfo_AfrClassDependencyTest extends TestCase
 
 
 
-
-
-
-    function setSkipClassInfoMergeProvider(): array
+    static function setSkipClassInfoMergeProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         $aFQCN = ['imaginary\un_existent','GlobalMockSingleton','PHPUnit\Framework\TestSuite'];

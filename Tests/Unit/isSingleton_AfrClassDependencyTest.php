@@ -13,7 +13,7 @@ class isSingleton_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isSingletonProvider(): array
+    static function isSingletonProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

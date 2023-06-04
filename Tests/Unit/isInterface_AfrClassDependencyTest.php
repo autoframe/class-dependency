@@ -13,7 +13,7 @@ class isInterface_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isInterfaceProvider(): array
+    static function isInterfaceProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

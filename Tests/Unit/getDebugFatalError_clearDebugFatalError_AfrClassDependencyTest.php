@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getDebugFatalError_clearDebugFatalError_AfrClassDependencyTest extends TestCase
 {
-    function getClearDebugFatalErrorProvider(): array
+    static function getClearDebugFatalErrorProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         AfrClassDependency::flush();

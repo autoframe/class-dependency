@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getParents_AfrClassDependencyTest extends TestCase
 {
-    private function flipT(array $a): array
+    private static function flipT(array $a): array
     {
         $a = array_flip($a);
         foreach ($a as &$v) {
@@ -20,25 +20,25 @@ class getParents_AfrClassDependencyTest extends TestCase
         return $a;
     }
 
-    function getParentsProvider(): array
+    static function getParentsProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 
         AfrClassDependency::flush();
 
         $aDeps = [
-            'GlobalMockInterfaceExa' => $this->flipT([]),
-            'GlobalMockInterfaceExb' => $this->flipT([]),
-            'GlobalMockInterface' => $this->flipT([]),
-            'GlobalMockTraitSub' => $this->flipT([]),
-            'GlobalMockTrait' => $this->flipT([]),
-            'GlobalMockAbstract' => $this->flipT([]),
-            'GlobalMockClass' => $this->flipT(['GlobalMockAbstract']),
-            'GlobalMockClass2' => $this->flipT(['GlobalMockAbstract', 'GlobalMockClass']),
-            'GlobalMockSingleton' => $this->flipT(['GlobalMockAbstract', 'GlobalMockClass', 'GlobalMockClass2']),
+            'GlobalMockInterfaceExa' => self::flipT([]),
+            'GlobalMockInterfaceExb' => self::flipT([]),
+            'GlobalMockInterface' => self::flipT([]),
+            'GlobalMockTraitSub' => self::flipT([]),
+            'GlobalMockTrait' => self::flipT([]),
+            'GlobalMockAbstract' => self::flipT([]),
+            'GlobalMockClass' => self::flipT(['GlobalMockAbstract']),
+            'GlobalMockClass2' => self::flipT(['GlobalMockAbstract', 'GlobalMockClass']),
+            'GlobalMockSingleton' => self::flipT(['GlobalMockAbstract', 'GlobalMockClass', 'GlobalMockClass2']),
         ];
         if (PHP_VERSION_ID >= 81000) {
-            $aDeps['GlobalMockEnum'] = $this->flipT([]);
+            $aDeps['GlobalMockEnum'] = self::flipT([]);
         }
 
         $aReturn = [];

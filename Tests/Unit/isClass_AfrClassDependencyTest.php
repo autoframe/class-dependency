@@ -13,7 +13,7 @@ class isClass_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isClassProvider(): array
+    static function isClassProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

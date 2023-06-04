@@ -13,7 +13,7 @@ class isInstantiable_AfrClassDependencyTest extends TestCase
 {
 
 
-    function isInstantiableProvider(): array
+    static function isInstantiableProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 

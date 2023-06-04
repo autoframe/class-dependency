@@ -6,5 +6,8 @@
         <testsuite name="Autoframe PHP dependency resolver for classes, interfaces and traits using static reflection and all in one class">
             <directory>./Tests/Unit</directory>
         </testsuite>
+        <testsuite name="Package Dependencies Autoframe/*">
+            <directory>*/autoframe/*/Tests/Unit</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

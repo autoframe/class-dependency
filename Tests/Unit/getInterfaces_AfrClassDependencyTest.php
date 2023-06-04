@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class getInterfaces_AfrClassDependencyTest extends TestCase
 {
-    private function flipT(array $a): array
+    private static function flipT(array $a): array
     {
         $a = array_flip($a);
         foreach ($a as &$v) {
@@ -20,26 +20,26 @@ class getInterfaces_AfrClassDependencyTest extends TestCase
         return $a;
     }
 
-    function getInterfacesProvider(): array
+    static function getInterfacesProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 
         AfrClassDependency::flush();
 
-        $allInterfaces = $this->flipT(['GlobalMockInterfaceExa', 'GlobalMockInterfaceExb','GlobalMockInterface']);
+        $allInterfaces = self::flipT(['GlobalMockInterfaceExa', 'GlobalMockInterfaceExb','GlobalMockInterface']);
         $aDeps = [
-            'GlobalMockInterfaceExa' => $this->flipT([]),
-            'GlobalMockInterfaceExb' => $this->flipT([]),
-            'GlobalMockInterface' => $this->flipT(['GlobalMockInterfaceExa', 'GlobalMockInterfaceExb']),
-            'GlobalMockTraitSub' => $this->flipT([]),
-            'GlobalMockTrait' => $this->flipT([]),
+            'GlobalMockInterfaceExa' => self::flipT([]),
+            'GlobalMockInterfaceExb' => self::flipT([]),
+            'GlobalMockInterface' => self::flipT(['GlobalMockInterfaceExa', 'GlobalMockInterfaceExb']),
+            'GlobalMockTraitSub' => self::flipT([]),
+            'GlobalMockTrait' => self::flipT([]),
             'GlobalMockAbstract' => $allInterfaces,
             'GlobalMockClass' => $allInterfaces,
             'GlobalMockClass2' => $allInterfaces,
             'GlobalMockSingleton' => $allInterfaces,
         ];
         if (PHP_VERSION_ID >= 81000) {
-            $aDeps['GlobalMockEnum'] = $this->flipT([]);
+            $aDeps['GlobalMockEnum'] = self::flipT([]);
         }
 
         $aReturn = [];

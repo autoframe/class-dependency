@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../TestClasses/bootstrapTestClasses.php';
 
 class doIDependOn_AfrClassDependencyTest extends TestCase
 {
-    function doIDependOnProvider(): array
+    static function doIDependOnProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
 
