@@ -8,7 +8,7 @@
         "php": "^7.4 || ^8.0",
         "autoframe/components-exception": "^1.0 || ^2.0"
     },
-    "version": "1.0.4",
+    "version": "1.0.5",
     "authors": [
         {
             "name": "Nistor Alexandru Marius",

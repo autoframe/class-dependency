@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Autoframe\ClassDependency;
 
-use Autoframe\Components\Exception\AfrException;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -174,7 +173,7 @@ class AfrClassDependency
      * @param array $aNamespaces
      * @param bool $bMergeWithExisting
      * @return array
-     * @throws AfrException
+     * @throws AfrClassDependencyException
      */
     public static function setSkipNamespaceInfo(array $aNamespaces, bool $bMergeWithExisting = false): array
     {
@@ -185,7 +184,7 @@ class AfrClassDependency
             if (!is_string($sNs)) {
                 $sCastNs = (string)$sNs;
                 if (strlen($sCastNs) < 1) {
-                    throw new AfrException(
+                    throw new AfrClassDependencyException(
                         'Namespace must be a string or castable! Please use an array of Namespaces in ' .
                         __CLASS__ . '::' . __FUNCTION__
                     );
@@ -332,7 +331,7 @@ class AfrClassDependency
             $this->sType = self::T;
         } elseif (interface_exists($this->sFQCN)) {
             $this->sType = self::I;
-        } elseif (PHP_VERSION_ID >= 81000 && enum_exists($this->sFQCN)) {
+        } elseif (PHP_VERSION_ID >= 81000 && \enum_exists($this->sFQCN)) {
             $this->sType = self::E;
         }
         return $this->sType;
