@@ -57,7 +57,7 @@ class getTraits_AfrClassDependencyTest extends TestCase
         $aDetected = $oDep->getTraits();
         ksort($aDetected);
         ksort($aExpected);
-        $this->assertEquals($aExpected, $aDetected);
+        $this->assertSame($aExpected, $aDetected);
     }
 
 

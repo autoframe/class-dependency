@@ -48,7 +48,7 @@ class isClass_AfrClassDependencyTest extends TestCase
      */
     public function isClassTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isClass());
+        $this->assertSame($bExpected, $oDep->isClass());
     }
 
 

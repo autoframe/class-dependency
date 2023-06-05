@@ -41,7 +41,7 @@ class getAllDependencies_AfrClassDependencyTest extends TestCase
      */
     public function getAllDependenciesTest(AfrClassDependency $oDep, string $sClassDep, bool $bIsset): void
     {
-        $this->assertEquals($bIsset, isset($oDep->getAllDependencies()[$sClassDep]));
+        $this->assertSame($bIsset, isset($oDep->getAllDependencies()[$sClassDep]));
 
     }
 

@@ -29,10 +29,10 @@ class getDependencyInfo_AfrClassDependencyTest extends TestCase
      */
     public function getDependencyInfoTest($oDep): void
     {
-        $this->assertEquals(true, $oDep instanceof AfrClassDependency);
+        $this->assertSame(true, $oDep instanceof AfrClassDependency);
 
         foreach (AfrClassDependency::getDependencyInfo() as $sFQCN =>$oAfrClassDependency){
-            $this->assertEquals(true, $oAfrClassDependency instanceof AfrClassDependency);
+            $this->assertSame(true, $oAfrClassDependency instanceof AfrClassDependency);
         }
 
     }

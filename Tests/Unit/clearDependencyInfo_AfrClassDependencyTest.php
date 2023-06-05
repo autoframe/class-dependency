@@ -34,9 +34,9 @@ class clearDependencyInfo_AfrClassDependencyTest extends TestCase
     public function clearDependencyInfoTest($sFQCN): void
     {
         AfrClassDependency::getClassInfo($sFQCN);
-        $this->assertEquals(true, count(AfrClassDependency::getADependency())>0);
+        $this->assertSame(true, count(AfrClassDependency::getADependency())>0);
         AfrClassDependency::clearDependencyInfo();
-        $this->assertEquals(0, count(AfrClassDependency::getADependency()));
+        $this->assertSame(0, count(AfrClassDependency::getADependency()));
     }
 
 

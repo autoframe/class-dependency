@@ -42,7 +42,7 @@ class getType_AfrClassDependencyTest extends TestCase
      */
     public function getTypeTest(AfrClassDependency $oDep, string $sType): void
     {
-        $this->assertEquals($sType, $oDep->getType());
+        $this->assertSame($sType, $oDep->getType());
     }
 
 

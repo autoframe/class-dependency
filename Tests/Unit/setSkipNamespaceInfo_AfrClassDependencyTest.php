@@ -34,17 +34,16 @@ class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
      */
     public function setSkipNamespaceInfoTest(string $sNamesapce, string $sFQCNToCheck, bool $bExpected): void
     {
-        $this->resetClassDep();
+        AfrClassDependency::flush();
         AfrClassDependency::setSkipNamespaceInfo([$sNamesapce], false);
-        $this->assertEquals($bExpected, in_array(
+        $this->assertSame($bExpected, in_array(
             AfrClassDependency::getClassInfo($sFQCNToCheck)->getType(),
             ['skip'/*, 'unknown'*/]
         ));
     }
 
 
-
-    static function setSkipNamespaceInfoMergTrueProvider(): array
+    static function setSkipNamespaceInfoMergeTrueProvider(): array
     {
         echo __CLASS__ . '->' . __FUNCTION__ . PHP_EOL;
         $aCombine = [];
@@ -123,15 +122,14 @@ class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
 
     /**
      * @test
-     * @dataProvider setSkipNamespaceInfoMergTrueProvider
+     * @dataProvider setSkipNamespaceInfoMergeTrueProvider
      */
-    public function setSkipNamespaceInfoMergTrueTest(string $sNs, string $sFQCN, bool $bSkip): void
+    public function setSkipNamespaceInfoMergeTrueTest(string $sNs, string $sFQCN, bool $bSkip): void
     {
-        // echo "# " . self::$iDS . " @$sNs\\$sFQCN($bSkip)\n"; self::$iDS++;
 
         if ($sNs === '|reset|') {
-            $this->resetClassDep();
-            $this->assertEquals([], AfrClassDependency::getDependencyInfo());
+            AfrClassDependency::flush();
+            $this->assertSame([], AfrClassDependency::getDependencyInfo());
             return;
         }
 
@@ -140,19 +138,24 @@ class setSkipNamespaceInfo_AfrClassDependencyTest extends TestCase
             self::$sLastNs = $sNs;
         }
 
-        $this->assertEquals($bSkip, AfrClassDependency::getClassInfo($sFQCN)->getType() === 'skip');
+        $this->assertSame($bSkip, AfrClassDependency::getClassInfo($sFQCN)->getType() === 'skip');
 
     }
 
     /**
-     * @return void
-     * @throws \Autoframe\Components\Exception\AfrException
+     * @test
      */
-    private function resetClassDep(): void
+    public function setSkipNamespaceInfoDuplicatesTest(): void
     {
-        AfrClassDependency::flush();
+        $aDuplicates = ['PHPUnit\Framework\\', 'imaginary', 'PHPUnit\Framework\\'];
+        $aExpected = ['PHPUnit\Framework\\', 'imaginary'];
+        foreach ([true, false] as $bMergeWithExisting) {
+            AfrClassDependency::flush();
+            AfrClassDependency::setSkipNamespaceInfo($aDuplicates, $bMergeWithExisting);
 
+            $this->assertSame(2, count(AfrClassDependency::getSkipNamespaceInfo()));
+            $this->assertSame($aExpected, AfrClassDependency::getSkipNamespaceInfo());
+        }
     }
-
 
 }

@@ -48,7 +48,7 @@ class isSingleton_AfrClassDependencyTest extends TestCase
      */
     public function isSingletonTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isSingleton());
+        $this->assertSame($bExpected, $oDep->isSingleton());
     }
 
 

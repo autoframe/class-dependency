@@ -35,7 +35,7 @@ class getClassInfo_AfrClassDependencyTest extends TestCase
     public function getClassInfoTest($obj_sFQCN): void
     {
         $oAfrClassDependency = AfrClassDependency::getClassInfo($obj_sFQCN);
-        $this->assertEquals(true, $oAfrClassDependency instanceof AfrClassDependency);
+        $this->assertSame(true, $oAfrClassDependency instanceof AfrClassDependency);
     }
 
 

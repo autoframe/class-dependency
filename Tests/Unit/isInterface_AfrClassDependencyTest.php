@@ -48,7 +48,7 @@ class isInterface_AfrClassDependencyTest extends TestCase
      */
     public function isInterfaceTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isInterface());
+        $this->assertSame($bExpected, $oDep->isInterface());
     }
 
 

@@ -177,7 +177,7 @@ class doIDependOn_AfrClassDependencyTest extends TestCase
     public function doIDependOnTest(AfrClassDependency $oDep, array $aMap): void
     {
         foreach ($aMap as $sMapClass => $bExpected) {
-            $this->assertEquals($bExpected, $oDep->doIDependOn($sMapClass));
+            $this->assertSame($bExpected, $oDep->doIDependOn($sMapClass));
         }
     }
 

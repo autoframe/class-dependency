@@ -41,6 +41,9 @@ class AfrClassDependency
     /** @var self[] */
     protected static array $aFatalErr = [];
 
+    protected static array $aSkipClasses = [];
+    protected static array $aSkipNamespaces = [];
+
     /**
      * Object or string containing Fully Qualified Class Name
      * @param mixed $obj_sFQCN
@@ -91,8 +94,8 @@ class AfrClassDependency
     {
         self::$aFatalErr = [];
         self::$aDependency = [];
-        self::$aSkipClasses=[];
-        self::$aSkipNamespaces=[];
+        self::$aSkipClasses = [];
+        self::$aSkipNamespaces = [];
     }
 
     /**
@@ -140,36 +143,61 @@ class AfrClassDependency
      * @param array $aFQCN
      * @param bool $bMergeWithExisting
      * @return array
+     * @throws AfrClassDependencyException
      */
     public static function setSkipClassInfo(array $aFQCN, bool $bMergeWithExisting = false): array
     {
-        if ($bMergeWithExisting) {
-            $aCurrent = self::getSkipClassInfo();
-            self::$aSkipClasses = array_merge($aCurrent, array_flip($aFQCN));
-        } else {
-            self::$aSkipClasses = array_flip($aFQCN);
+        if (!$bMergeWithExisting) {
+            self::$aSkipClasses = []; //cleanup
+        }
+        foreach ($aFQCN as $sFQCN) {
+            if (!is_string($sFQCN)) {
+                if (is_object($sFQCN)) {
+                    $sFQCN = get_class($sFQCN);
+                } else {
+                    throw new AfrClassDependencyException(
+                        'Class name must be a string! Please use an array of FQCNs in ' .
+                        __CLASS__ . '::' . __FUNCTION__
+                    );
+                }
+            }
+            self::$aSkipClasses[$sFQCN] = true;
         }
 
-        foreach (self::$aSkipClasses as $sFQCN => &$x) {
+        foreach (self::$aSkipClasses as $sFQCN => &$bUnsetted) {
             if (isset(self::$aDependency[$sFQCN])) {
                 unset(self::$aDependency[$sFQCN]);
-                $x = true; //internal debug flag
+                $bUnsetted = true; //internal debug flag
+            } else {
+                $bUnsetted = false; //internal debug flag
             }
-            $x = false; //internal debug flag
         }
         self::processNewSkipRules();
         return self::$aSkipClasses;
     }
 
     /**
+     * Returns unset info into key prefix: 1|FQCN or 0|FQCN
      * @return array
      */
     public static function getSkipClassInfo(): array
     {
-        return !isset(self::$aSkipClasses) || empty(self::$aSkipClasses) ? [] : self::$aSkipClasses;
+        if (empty(self::$aSkipClasses)) {
+            return [];
+        }
+        $aOut = [];
+        foreach (self::$aSkipClasses as $sFQCN => $bUnsetted) {
+            $aOut[($bUnsetted ? '1' : '0') . '|' . $sFQCN] = $sFQCN;
+        }
+        return $aOut;
     }
 
     /**
+     * Namespace match rules:
+     * '' match classes without namespace;
+     * '\' will match all classes;
+     * 'Afr' will match classes having the exact namespace;
+     * 'Afr\' will match all the classes the parent namespace;
      * @param array $aNamespaces
      * @param bool $bMergeWithExisting
      * @return array
@@ -180,24 +208,14 @@ class AfrClassDependency
         if (!$bMergeWithExisting || !isset(self::$aSkipNamespaces)) {
             self::$aSkipNamespaces = []; //clear
         }
-        foreach ($aNamespaces as &$sNs) {
+        foreach ($aNamespaces as $sNs) {
             if (!is_string($sNs)) {
-                $sCastNs = (string)$sNs;
-                if (strlen($sCastNs) < 1) {
-                    throw new AfrClassDependencyException(
-                        'Namespace must be a string or castable! Please use an array of Namespaces in ' .
-                        __CLASS__ . '::' . __FUNCTION__
-                    );
-                }
-                $sNs = $sCastNs;
+                throw new AfrClassDependencyException(
+                    'Namespace must be a string! Please use an array of Namespaces in ' .
+                    __CLASS__ . '::' . __FUNCTION__
+                );
             }
-            if ($sNs === '') {
-                self::$aSkipNamespaces[''] = 0; //class without namespace
-            } elseif ($sNs === '\\') {
-                self::$aSkipNamespaces['\\'] = 1; //skip any class and namespace
-            } else {
-                self::$aSkipNamespaces[$sNs] = strlen($sNs);
-            }
+            self::$aSkipNamespaces[$sNs] = strlen($sNs); //length is used for loop speed improvements
         }
         self::processNewSkipRules();
 
@@ -209,7 +227,14 @@ class AfrClassDependency
      */
     public static function getSkipNamespaceInfo(): array
     {
-        return !isset(self::$aSkipNamespaces) ? [] : self::$aSkipNamespaces;
+        if (empty(self::$aSkipNamespaces)) {
+            return [];
+        }
+        $aOut = [];
+        foreach (self::$aSkipNamespaces as $sNs => $iLen) {
+            $aOut[] = $sNs;
+        }
+        return $aOut;
     }
 
     /**
@@ -248,7 +273,7 @@ class AfrClassDependency
             return false; //no rules set
         }
         if (isset(self::$aSkipNamespaces['\\'])) {
-            return true; //this will match any namespace
+            return true; //this will match any class
         }
         $sFQCN = trim($sFQCN, '\\');
         if (strpos($sFQCN, '\\') === false) { //class without namespace
@@ -285,9 +310,6 @@ class AfrClassDependency
      * Everything else is cast to string and can fail!
      * @param $mClass
      */
-
-    protected static array $aSkipClasses;
-    protected static array $aSkipNamespaces;
 
     protected const C = 'class';
     protected const T = 'trait';
@@ -349,7 +371,7 @@ class AfrClassDependency
             if (
                 // Cleanup previously skipped, so they can be resolved with a new request
                 $oSelf->getType() === self::S && !$bIsSkipped ||
-                // Apply new namespace rules for existing
+                // Apply new rules for existing
                 $oSelf->getType() !== self::S && $bIsSkipped
             ) {
                 unset($oSelf);

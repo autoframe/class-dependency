@@ -42,8 +42,8 @@ class getClassName_AfrClassDependencyTest extends TestCase
      */
     public function getClassNameTest(AfrClassDependency $oDep, string $sClassDep): void
     {
-        $this->assertEquals($sClassDep, $oDep->getClassName());
-        $this->assertEquals($sClassDep, (string)$oDep);
+        $this->assertSame($sClassDep, $oDep->getClassName());
+        $this->assertSame($sClassDep, (string)$oDep);
 
     }
 

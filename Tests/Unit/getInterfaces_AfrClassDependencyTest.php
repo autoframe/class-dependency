@@ -58,7 +58,7 @@ class getInterfaces_AfrClassDependencyTest extends TestCase
         $aDetected = $oDep->getInterfaces();
         ksort($aDetected);
         ksort($aExpected);
-        $this->assertEquals($aExpected, $aDetected);
+        $this->assertSame($aExpected, $aDetected);
     }
 
 

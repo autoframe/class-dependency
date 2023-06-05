@@ -46,7 +46,7 @@ class isAbstract_AfrClassDependencyTest extends TestCase
      */
     public function isAbstractTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isAbstract());
+        $this->assertSame($bExpected, $oDep->isAbstract());
     }
 
 

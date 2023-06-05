@@ -30,18 +30,18 @@ class getDebugFatalError_clearDebugFatalError_AfrClassDependencyTest extends Tes
     public function getClearDebugFatalErrorTest($oDep): void
     {
         $mErrArr = AfrClassDependency::getDebugFatalError();
-        $this->assertEquals('array', gettype($mErrArr));
+        $this->assertSame('array', gettype($mErrArr));
         $this->assertCount(0, $mErrArr);
 
         AfrClassDependency::setAFatalErr('CorruptedClass');
         $mErrArr = AfrClassDependency::getDebugFatalError();
-        $this->assertEquals('array', gettype($mErrArr));
+        $this->assertSame('array', gettype($mErrArr));
         $this->assertCount(1, $mErrArr);
 
 
         AfrClassDependency::clearDebugFatalError();
         $mErrArr = AfrClassDependency::getDebugFatalError();
-        $this->assertEquals('array', gettype($mErrArr));
+        $this->assertSame('array', gettype($mErrArr));
         $this->assertCount(0, $mErrArr);
     }
 

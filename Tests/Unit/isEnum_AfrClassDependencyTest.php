@@ -46,7 +46,7 @@ class isEnum_AfrClassDependencyTest extends TestCase
      */
     public function isEnumTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isEnum());
+        $this->assertSame($bExpected, $oDep->isEnum());
     }
 
 

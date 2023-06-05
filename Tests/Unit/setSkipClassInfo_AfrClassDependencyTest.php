@@ -26,11 +26,11 @@ class setSkipClassInfo_AfrClassDependencyTest extends TestCase
      */
     public function setSkipClassInfoTest(string $sFQCN): void
     {
-        $this->resetClassDep();
-        $this->assertEquals(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
+        AfrClassDependency::flush();
+        $this->assertSame(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
 
         AfrClassDependency::setSkipClassInfo([$sFQCN]);
-        $this->assertEquals(true, in_array(
+        $this->assertSame(true, in_array(
             AfrClassDependency::getClassInfo($sFQCN)->getType(),
             ['skip', 'unknown']
         ));
@@ -53,16 +53,16 @@ class setSkipClassInfo_AfrClassDependencyTest extends TestCase
      */
     public function setSkipClassInfoMergeFalseTest(array $aFQCN): void
     {
-        $this->resetClassDep();
+        AfrClassDependency::flush();
         foreach($aFQCN as $sFQCN){
-            $this->assertEquals(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
+            $this->assertSame(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
             AfrClassDependency::setSkipClassInfo([$sFQCN],false);
-            $this->assertEquals(true, in_array(
+            $this->assertSame(true, in_array(
                 AfrClassDependency::getClassInfo($sFQCN)->getType(),
                 ['skip', 'unknown']
             ));
             foreach(array_diff($aFQCN,[$sFQCN]) as $sClassDiff){
-                $this->assertEquals(true,AfrClassDependency::getClassInfo($sClassDiff)->getType() !== 'skip');
+                $this->assertSame(true,AfrClassDependency::getClassInfo($sClassDiff)->getType() !== 'skip');
             }
         }
     }
@@ -74,30 +74,51 @@ class setSkipClassInfo_AfrClassDependencyTest extends TestCase
      */
     public function setSkipClassInfoMergTrueTest(array $aFQCN): void
     {
-        $this->resetClassDep();
+        AfrClassDependency::flush();
         $aSkipped = [];
         foreach($aFQCN as $sFQCN){
-            $this->assertEquals(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
+            $this->assertSame(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
             AfrClassDependency::setSkipClassInfo([$sFQCN],true);
             $aSkipped[] = $sFQCN;
-            $this->assertEquals(true, in_array(
+            $this->assertSame(true, in_array(
                 AfrClassDependency::getClassInfo($sFQCN)->getType(),
                 ['skip', 'unknown']
             ));
             foreach(array_diff($aFQCN,$aSkipped) as $sClassDiff){
-                $this->assertEquals(true,AfrClassDependency::getClassInfo($sClassDiff)->getType() !== 'skip');
+                $this->assertSame(true,AfrClassDependency::getClassInfo($sClassDiff)->getType() !== 'skip');
             }
         }
     }
+
+
+
     /**
-     * @return void
-     * @throws \Autoframe\Components\Exception\AfrException
+     * @test
      */
-    private function resetClassDep(): void
+    public function setSkipClassInfoDuplicatesTest(): void
     {
-        AfrClassDependency::flush();
-
+        $aDuplicates = ['GlobalMockSingleton','PHPUnit\Framework\TestSuite','GlobalMockSingleton'];
+        $aExpected = ['GlobalMockSingleton','PHPUnit\Framework\TestSuite'];
+        sort($aExpected);
+        foreach($aDuplicates as $sFQCN){
+            foreach ([true,false] as $bMergeWithExisting){
+                AfrClassDependency::flush();
+                $this->assertSame(true,AfrClassDependency::getClassInfo($sFQCN)->getType() !== 'skip');
+                AfrClassDependency::setSkipClassInfo($aDuplicates,$bMergeWithExisting);
+                $this->assertSame(true, in_array(
+                    AfrClassDependency::getClassInfo($sFQCN)->getType(),
+                    ['skip', 'unknown']
+                ));
+                $aProcessed = AfrClassDependency::getSkipClassInfo();
+                sort($aProcessed);
+                $this->assertSame(2, count($aProcessed));
+                $this->assertSame(
+                    $aExpected,
+                    $aProcessed,
+                    print_r([$aExpected,$aProcessed],true)
+                );
+            }
+        }
     }
-
 
 }

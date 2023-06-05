@@ -48,7 +48,7 @@ class isInstantiable_AfrClassDependencyTest extends TestCase
      */
     public function isInstantiableTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isInstantiable());
+        $this->assertSame($bExpected, $oDep->isInstantiable());
     }
 
 

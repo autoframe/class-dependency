@@ -48,7 +48,7 @@ class isTrait_AfrClassDependencyTest extends TestCase
      */
     public function isTraitTest(AfrClassDependency $oDep, bool $bExpected): void
     {
-        $this->assertEquals($bExpected, $oDep->isTrait());
+        $this->assertSame($bExpected, $oDep->isTrait());
     }
 
 

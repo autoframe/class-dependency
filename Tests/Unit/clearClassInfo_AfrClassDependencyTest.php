@@ -32,9 +32,9 @@ class clearClassInfo_AfrClassDependencyTest extends TestCase
     public function clearClassInfoTest($sFQCN): void
     {
         AfrClassDependency::getClassInfo($sFQCN);
-        $this->assertEquals(true, isset(AfrClassDependency::getADependency()[$sFQCN]));
+        $this->assertSame(true, isset(AfrClassDependency::getADependency()[$sFQCN]));
         AfrClassDependency::clearClassInfo($sFQCN);
-        $this->assertEquals(false, isset(AfrClassDependency::getADependency()[$sFQCN]));
+        $this->assertSame(false, isset(AfrClassDependency::getADependency()[$sFQCN]));
     }
 
 

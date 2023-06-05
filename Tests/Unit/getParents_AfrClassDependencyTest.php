@@ -57,7 +57,7 @@ class getParents_AfrClassDependencyTest extends TestCase
         $aDetected = $oDep->getParents();
         ksort($aDetected);
         ksort($aExpected);
-        $this->assertEquals($aExpected, $aDetected);
+        $this->assertSame($aExpected, $aDetected);
     }
 
 
